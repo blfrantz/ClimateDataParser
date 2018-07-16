@@ -13,6 +13,7 @@ MONGO_PORT = 27017
 MONGO_DB = 'ghcn'
 MONGO_COL = 'monthly_v3'
 
+# BATCH_SIZE = 10000
 
 class GhcnToMongo():
   def __init__(self, dat_file, meta_file, countries_file):
@@ -21,6 +22,8 @@ class GhcnToMongo():
     self._meta = self._get_meta(meta_file)
 
     self._db = MongoClient(MONGO_HOST, MONGO_PORT)[MONGO_DB]
+
+    # self._batch = []
 
   @staticmethod
   def _get_countries(countries_file):
@@ -101,6 +104,10 @@ class GhcnToMongo():
   def _write(self, row):
     row['es_state'] = 'unprocessed'
     self._db[MONGO_COL].insert_one(row)
+    # self._batch.append(row)
+    # if len(self._batch) == BATCH_SIZE:
+    #   self._db[MONGO_COL].insert_many(self._batch)
+    #   self._batch = []
 
   def run(self):
     graph = bonobo.Graph(
