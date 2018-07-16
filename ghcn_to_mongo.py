@@ -1,5 +1,5 @@
 import os
-from datetime import date
+from datetime import datetime
 from copy import deepcopy
 import glob
 
@@ -11,6 +11,7 @@ GHCN_FILES = 'F:\dev\ClimateExample\project\data'
 MONGO_HOST = 'localhost'
 MONGO_PORT = 27017
 MONGO_DB = 'ghcn'
+MONGO_COL = 'monthly_v3'
 
 
 class GhcnToMongo():
@@ -84,7 +85,7 @@ class GhcnToMongo():
     if increments == 12:  # monthly
       for mo in range(increments):
         obj = deepcopy(base_obj)
-        obj['date'] = date(year=year, month=mo+1, day=1)
+        obj['date'] = datetime(year=year, month=mo+1, day=1)
 
         i = 19 + (mo * 8)
         if row[i:i+5] is not '-9999':  # Skip missing temps
@@ -98,7 +99,8 @@ class GhcnToMongo():
         " don't support this type of input.")
 
   def _write(self, row):
-    print(row)
+    row['es_state'] = 'unprocessed'
+    self._db[MONGO_COL].insert_one(row)
 
   def run(self):
     graph = bonobo.Graph(
