@@ -16,13 +16,15 @@ MONGO_COL = 'monthly_v3'
 BATCH_SIZE = 10000
 
 class GhcnToMongo():
-  def __init__(self, dat_file, meta_file, countries_file):
+  def __init__(self, dat_file, meta_file, countries_file, reset_db=False):
     self._data = dat_file
     self._countries = self._get_countries(countries_file)
     self._meta = self._get_meta(meta_file)
 
     self._db = MongoClient(MONGO_HOST, MONGO_PORT)[MONGO_DB]
-    self._setup_collection()
+
+    if reset_db:
+      self._setup_collection()
 
   def _setup_collection(self):
     self._db[MONGO_COL].drop()
@@ -84,7 +86,7 @@ class GhcnToMongo():
       'country': self._countries[row[0:3]],
       'meta': self._meta[row[0:11]],
       'element': row[15:19],
-      'es_state': 'new'
+      '_es_state': 'new'
     }
 
     year = int(row[11:15])
@@ -97,7 +99,7 @@ class GhcnToMongo():
 
         i = 19 + (mo * 8)
         if row[i:i+5] is not '-9999':  # Skip missing temps
-          obj['value'] = float(row[i:i+5].strip()) / 100  # Convert to whole degrees C
+          obj['temp'] = float(row[i:i+5].strip()) / 100  # Convert to whole degrees C
           obj['dmflag'] = row[i+5:i+6].strip()
           obj['qcflag'] = row[i+6:i+7].strip()
           obj['dsflag'] = row[i+7:i+8].strip()
@@ -119,7 +121,9 @@ class GhcnToMongo():
 
 if __name__ == '__main__':
   countries = os.path.join(GHCN_FILES, 'country-codes')
+  first = True
   for file in glob.glob(os.path.join(GHCN_FILES, '*.dat')):
     print('Processing ' + file)
     meta = os.path.splitext(file)[0] + '.inv'
-    GhcnToMongo(file, meta, countries).run()
+    GhcnToMongo(file, meta, countries, first).run()
+    first = False
