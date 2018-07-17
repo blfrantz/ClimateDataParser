@@ -22,6 +22,11 @@ class GhcnToMongo():
     self._meta = self._get_meta(meta_file)
 
     self._db = MongoClient(MONGO_HOST, MONGO_PORT)[MONGO_DB]
+    self._setup_collection()
+
+  def _setup_collection(self):
+    self._db[MONGO_COL].drop()
+    self._db[MONGO_COL].create_index('es_state')
 
   @staticmethod
   def _get_countries(countries_file):
