@@ -13,6 +13,7 @@ MONGO_PORT = 27017
 MONGO_DB = 'ghcn'
 MONGO_COL = 'monthly_v3'
 
+ES_STATE = '_es_state'
 BATCH_SIZE = 10000
 
 class GhcnToMongo():
@@ -28,7 +29,7 @@ class GhcnToMongo():
 
   def _setup_collection(self):
     self._db[MONGO_COL].drop()
-    self._db[MONGO_COL].create_index('es_state')
+    self._db[MONGO_COL].create_index(ES_STATE)
 
   @staticmethod
   def _get_countries(countries_file):
@@ -86,7 +87,7 @@ class GhcnToMongo():
       'country': self._countries[row[0:3]],
       'meta': self._meta[row[0:11]],
       'element': row[15:19],
-      '_es_state': 'new'
+      ES_STATE: 'insert'
     }
 
     year = int(row[11:15])
@@ -98,7 +99,7 @@ class GhcnToMongo():
         obj['date'] = datetime(year=year, month=mo+1, day=1)
 
         i = 19 + (mo * 8)
-        if row[i:i+5] is not '-9999':  # Skip missing temps
+        if row[i:i+5].strip() != '-9999':  # Skip missing temps
           obj['temp'] = float(row[i:i+5].strip()) / 100  # Convert to whole degrees C
           obj['dmflag'] = row[i+5:i+6].strip()
           obj['qcflag'] = row[i+6:i+7].strip()
