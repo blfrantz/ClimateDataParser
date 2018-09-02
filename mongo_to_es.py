@@ -44,8 +44,12 @@ class MongoToElasticsearch():
           'mappings': {
             ES_TYPE: {
               'properties': {
-                'location': {
-                  'type': 'geo_point'
+                'meta': {
+                  'properties': {
+                    'location': {
+                      'type': 'geo_point'
+                    }
+                  }
                 }
               }
             }
