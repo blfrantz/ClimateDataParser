@@ -1,10 +1,8 @@
-# Introduction
-This project aims to provide a simple example of the data analysis architecture described in the following video series: (link coming soon)
+# Climate Data Parser
+This repo contains some simple python ETL scripts written as supporting material for the following video series: (link coming soon).  In short, it combines mongoDB with elasticsearch and kibana to deliver a scalable and easy end-to-end solution for general-purpose data exploration and analysis.
 
-In short, it combines mongoDB with elasticsearch and kibana to deliver a scalable and easy end-to-end solution for general-purpose data exploration and analysis.
-
-By way of example, this project will ingest monthly climate data published by NOAA here:
-ftp://ftp.ncdc.noaa.gov/pub/data/ghcn/v3/
+By way of example, the main ETL script ingests monthly climate data published by NOAA here:
+`ftp://ftp.ncdc.noaa.gov/pub/data/ghcn/v3/`
 It expects the following files from that FTP location to be saved to a 'data' folder next to these scripts:
 - country-codes
 - contents of the 6 ghcnm.[...].tar.gz files (no subfolders, just the files)
