@@ -9,15 +9,13 @@ from pymongo import MongoClient, DeleteOne, UpdateOne
 from bson import ObjectId
 from elasticsearch import Elasticsearch, helpers
 
-GHCN_FILES = 'F:\dev\ClimateExample\project\data'
-
 MONGO_HOST = 'localhost'
 MONGO_PORT = 27017
 MONGO_DB = 'ghcn'
 MONGO_COL = 'monthly_v3'
 
 ES_HOSTS = ['localhost:9200']
-ES_INDEX = 'ghcn_monthly_v3'
+ES_INDEX = 'ghcn_monthly'
 ES_TYPE = 'monthly'
 ES_STATE = '_es_state'
 
